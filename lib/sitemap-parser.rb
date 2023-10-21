@@ -107,6 +107,8 @@ class SitemapParser
     response = request.run
     raise "HTTP request to #{url} failed" unless response.success?
 
+    sleep(10)
+
     inflate_body_if_needed(response)
   end
 

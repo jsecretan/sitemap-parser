@@ -14,7 +14,7 @@ class SitemapParser
     url_regex: nil,
     sleep_after_fetch: 0,
     lastmod_after: nil,
-  }.
+  }.freeze
 
   DEFLATE_TYPE_REGEX = %r{application/((x-)?gzip|octet-stream)}.freeze
 

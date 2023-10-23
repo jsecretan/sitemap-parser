@@ -11,8 +11,10 @@ class SitemapParser
   DEFAULT_OPTIONS = {
     followlocation: true,
     recurse: false,
-    url_regex: nil
-  }.freeze
+    url_regex: nil,
+    sleep_after_fetch: 0,
+    lastmod_after: nil,
+  }.
 
   DEFLATE_TYPE_REGEX = %r{application/((x-)?gzip|octet-stream)}.freeze
 
@@ -53,8 +55,11 @@ class SitemapParser
     urls = sitemapindex.search('sitemap')
     urls = filter_sitemap_urls(urls)
     urls.each do |sitemap|
-      child_sitemap_location = sitemap.at('loc').content
-      found_urls << self.class.new(child_sitemap_location, recurse: @options[:recurse]).urls
+      if !options[:lastmod_after] || 
+        (options[:lastmod_after] && Date.parse(sitemap.at('lastmod').content) > Date.parse(options[:lastmod_after]))
+        child_sitemap_location = sitemap.at('loc').content
+        found_urls << self.class.new(child_sitemap_location, recurse: @options[:recurse]).urls
+      end
     end
 
     found_urls.flatten
@@ -107,7 +112,9 @@ class SitemapParser
     response = request.run
     raise "HTTP request to #{url} failed" unless response.success?
 
-    sleep(10)
+    if options[:sleep_after_fetch] > 0
+      sleep(options[:sleep_after_fetch])
+    end
 
     inflate_body_if_needed(response)
   end

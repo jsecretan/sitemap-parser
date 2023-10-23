@@ -106,7 +106,7 @@ class SitemapParser
   def fetch_remote_sitemap
     return nil unless remote_sitemap?
 
-    request_options = options.dup.tap { |opts| opts.delete(:recurse); opts.delete(:url_regex) }
+    request_options = options.dup.tap { |opts| opts.delete(:recurse); opts.delete(:url_regex); opts.delete(:sleep_after_fetch); opts.delete(:lastmod_after) }
     request = Typhoeus::Request.new(url, request_options)
 
     response = request.run
